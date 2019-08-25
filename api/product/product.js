@@ -71,11 +71,8 @@ class Product{
             if(!productId){
                 throw new Error({'notFound':'productId Not Found'})
             }
-            const product = await productModel.update({_id:product_id}, {$set:req.body});
-            if(product.ok === 0){
-                throw new Error('Error getting product update')
-            }
-            res.send({'Successful':"Update Successfully"});      
+            await productModel.update({_id:productId}, {$set:req.body});
+            res.send({'Successful':"Update Successfully"});
         }catch (e){
             res.send({'Error':'Error getting product update'});
         }        
