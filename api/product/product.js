@@ -21,6 +21,29 @@ class Product {
       res.send({ Error: "Error getting products" });
     }
   }
+  async getPublishedProducts(req, res) {
+    try {
+      let product = await productModel.aggregate([
+        { "$addFields": { "productId": { "$toString": "$_id" }}},
+        { $lookup:
+           {
+             from: 'segment',
+             localField: 'productId',
+             foreignField: 'product_id',
+             as: 'segment'
+           }
+         },
+         {
+            $match:{
+               "product.isPublished": true,
+            }
+         },
+        ]);
+      res.send(product);
+    } catch (error) {
+      res.send({ Error: "Error getting products" });
+    }
+  }
 
   async getProductById(req, res) {
     try {
