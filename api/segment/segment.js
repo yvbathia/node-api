@@ -35,5 +35,16 @@ class Segment {
       res.send({ Error: "Error getting product update" });
     }
   }
+  async updateSegmentsSequence(req, res) {
+    const data = req.body.payload;
+    try {
+      for (let i = 0; i < data.length; i++){
+        await segmentModel.updateOne({ _id: data[i].segment_id }, { $set: {sequence_number: data[i].sequence_number} });
+      }
+      res.send({ Successful: "Update Successfully" });
+    } catch (e) {
+      res.send({ Error: "Error getting product update" });
+    }
+  }
 }
 module.exports = new Segment();
