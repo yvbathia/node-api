@@ -5,7 +5,17 @@ const fs = require("fs");
 class Product {
   async getProducts(req, res) {
     try {
-      const product = await productModel.find({});
+      let product = await productModel.aggregate([
+        { "$addFields": { "productId": { "$toString": "$_id" }}},
+        { $lookup:
+           {
+             from: 'segment',
+             localField: 'productId',
+             foreignField: 'product_id',
+             as: 'segment'
+           }
+         }
+        ]);
       res.send(product);
     } catch (error) {
       res.send({ Error: "Error getting products" });
