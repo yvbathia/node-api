@@ -1,6 +1,9 @@
 const prodctModelContructor = require("./product-model");
 const productModel = new prodctModelContructor().model;
+const segmentModelContructor = require("../segment/segment-model");
+const segmentModel = new segmentModelContructor().model;
 const fs = require("fs");
+const myId = mongoose.Types.ObjectId();
 
 class Product {
   async getProducts(req, res) {
@@ -72,19 +75,23 @@ class Product {
 
   async addProduct(req, res) {
     try {
+      const segment = await segmentModel();
       const product = await productModel();
+      product.name = req.body.name;
+      product.isPublished = req.body.isPublished;
+      product.isArchive = req.body.isArchive;
+      const segmentResponse = await product.save();
       for (let i = 0; i < req.files.length; i++) {
-        product.images.push(req.files[i].originalname);
+        segment.images.push(req.files[i].originalname);
       }
-      (product.product_id = req.body.product_id),
-        (product.segment_id = req.body.segment_id),
-        (product.video_url = req.body.video_url),
-        (product.start_time = req.body.start_time),
-        (product.end_time = req.body.end_time),
-        (product.sequence_number = req.body.sequence_number),
-        (product.isPublished = req.body.isPublished),
-        (product.isArchive = req.body.isArchive),
-        await product.save();
+      segment.product_id = segmentResponse.id,
+      segment.video_url = req.body.video_url,
+      segment.start_time = req.body.start_time,
+      segment.end_time = req.body.end_time,
+      segment.sequence_number = req.body.sequence_number,
+      segment.isPublished = req.body.isPublished,
+      segment.isArchive = req.body.isArchive,
+      await segment.save();
       res.send({ Successful: "product Added Successfully" });
     } catch (e) {
       res.send({ Error: "Error Added product" });

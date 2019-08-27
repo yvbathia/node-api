@@ -25,6 +25,9 @@ class SegmentModel {
           },
           sequence_number: {
             type: Number
+          },
+          video_text:{
+            type: String
           }
         },
         {
